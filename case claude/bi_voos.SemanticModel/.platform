@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "bi_voos"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "56a9ea86-a61a-49f8-8b73-8c363bf4291b"
+  }
+}

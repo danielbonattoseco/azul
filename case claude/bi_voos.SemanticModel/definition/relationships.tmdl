@@ -1,0 +1,4 @@
+relationship 'Avaliações_ID_airline_passenger_satisfaction_ID'
+	fromColumn: 'Avaliações'.ID
+	toColumn: airline_passenger_satisfaction.ID
+

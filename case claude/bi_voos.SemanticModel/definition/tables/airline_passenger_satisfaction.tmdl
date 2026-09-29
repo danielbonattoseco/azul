@@ -1,0 +1,331 @@
+table airline_passenger_satisfaction
+	lineageTag: 3dee80ce-0519-479e-92a7-3b64a6632b97
+
+	column ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 42cec1f6-9df1-4e17-82d4-ab39312da8dc
+		summarizeBy: count
+		sourceColumn: ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Gender
+		dataType: string
+		lineageTag: 68fbdb48-a815-4a38-a07a-94ea7573a3ba
+		summarizeBy: none
+		sourceColumn: Gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column Age
+		dataType: int64
+		formatString: 0
+		lineageTag: 70105116-c941-46b7-bf42-b0bebf75a55d
+		summarizeBy: sum
+		sourceColumn: Age
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Customer Type'
+		dataType: string
+		lineageTag: 72bf414a-e020-411f-b16a-555ded67d4a1
+		summarizeBy: none
+		sourceColumn: Customer Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Type of Travel'
+		dataType: string
+		lineageTag: 00f12ee7-6f13-477f-be9b-27276c18955e
+		summarizeBy: none
+		sourceColumn: Type of Travel
+
+		annotation SummarizationSetBy = Automatic
+
+	column Class
+		dataType: string
+		lineageTag: 3fa8794b-751b-404c-9e6a-36857d9cad3f
+		summarizeBy: none
+		sourceColumn: Class
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Flight Distance'
+		dataType: int64
+		formatString: 0
+		lineageTag: 51e53a6f-e207-4da3-b3f8-36ae2aa76efc
+		summarizeBy: sum
+		sourceColumn: Flight Distance
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Departure Delay'
+		dataType: int64
+		formatString: 0
+		lineageTag: 02ed3e43-36a7-4e7f-8c5c-6922f4edc1bd
+		summarizeBy: sum
+		sourceColumn: Departure Delay
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Arrival Delay'
+		dataType: int64
+		formatString: 0
+		lineageTag: 6291d48e-a349-4626-9ef6-90c9a21da555
+		summarizeBy: sum
+		sourceColumn: Arrival Delay
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Departure and Arrival Time Convenience'
+		dataType: int64
+		formatString: 0
+		lineageTag: a870052c-8075-4bf1-924b-958923768ee4
+		summarizeBy: sum
+		sourceColumn: Departure and Arrival Time Convenience
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ease of Online Booking'
+		dataType: int64
+		formatString: 0
+		lineageTag: 30bd67ac-5a45-48db-a962-60e818da2653
+		summarizeBy: sum
+		sourceColumn: Ease of Online Booking
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Check-in Service'
+		dataType: int64
+		formatString: 0
+		lineageTag: 0062e0b3-b4b0-4885-9455-66f3507df863
+		summarizeBy: sum
+		sourceColumn: Check-in Service
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Online Boarding'
+		dataType: int64
+		formatString: 0
+		lineageTag: 0cd72425-bda7-4b5b-ac9c-8caca9dba140
+		summarizeBy: sum
+		sourceColumn: Online Boarding
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Gate Location'
+		dataType: int64
+		formatString: 0
+		lineageTag: 25f2f8dc-e718-4f9f-8a2f-b54434b1093b
+		summarizeBy: sum
+		sourceColumn: Gate Location
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'On-board Service'
+		dataType: int64
+		formatString: 0
+		lineageTag: 41303355-4940-4cdf-beb2-e5fd19f657d6
+		summarizeBy: sum
+		sourceColumn: On-board Service
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Seat Comfort'
+		dataType: int64
+		formatString: 0
+		lineageTag: 04332aef-8360-464f-b9ee-b642e94fce01
+		summarizeBy: sum
+		sourceColumn: Seat Comfort
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Leg Room Service'
+		dataType: int64
+		formatString: 0
+		lineageTag: 67dac5e8-856d-4a85-acf2-90010f140ac1
+		summarizeBy: sum
+		sourceColumn: Leg Room Service
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cleanliness
+		dataType: int64
+		formatString: 0
+		lineageTag: 5ccf8dc9-6718-4cdb-af23-2c2013589f7d
+		summarizeBy: sum
+		sourceColumn: Cleanliness
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Food and Drink'
+		dataType: int64
+		formatString: 0
+		lineageTag: 4f834692-926e-419e-9261-0de87ebdab51
+		summarizeBy: sum
+		sourceColumn: Food and Drink
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'In-flight Service'
+		dataType: int64
+		formatString: 0
+		lineageTag: c1881ae6-9a3a-4c72-bd17-e7d725e4fddb
+		summarizeBy: sum
+		sourceColumn: In-flight Service
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'In-flight Wifi Service'
+		dataType: int64
+		formatString: 0
+		lineageTag: 740b71d2-50b3-4b38-a977-255624089598
+		summarizeBy: sum
+		sourceColumn: In-flight Wifi Service
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'In-flight Entertainment'
+		dataType: int64
+		formatString: 0
+		lineageTag: 920377e2-e6c7-4ff7-ad3e-0c6245f41881
+		summarizeBy: sum
+		sourceColumn: In-flight Entertainment
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Baggage Handling'
+		dataType: int64
+		formatString: 0
+		lineageTag: 43c40051-0419-4d59-9517-2de20862e793
+		summarizeBy: sum
+		sourceColumn: Baggage Handling
+
+		annotation SummarizationSetBy = Automatic
+
+	column Satisfaction
+		dataType: string
+		lineageTag: d37d18a6-3a96-40e6-88f1-b46f8cd480e9
+		summarizeBy: none
+		sourceColumn: Satisfaction
+
+		annotation SummarizationSetBy = Automatic
+
+	/// 1 = Satisfied; 0 = Neutral or Dissatisfied. Base para correlações e médias ponderadas.
+	column 'Satisfeito (1/0)' = IF ( airline_passenger_satisfaction[Satisfaction] = "Satisfied", 1, 0 )
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+
+	column 'Status Satisfação' = IF ( airline_passenger_satisfaction[Satisfaction] = "Satisfied", "Satisfeito", "Neutro ou Insatisfeito" )
+		dataType: string
+		summarizeBy: none
+
+	column 'Ordem Faixa Etária' =
+			SWITCH (
+			    TRUE (),
+			    airline_passenger_satisfaction[Age] < 18, 1,
+			    airline_passenger_satisfaction[Age] < 25, 2,
+			    airline_passenger_satisfaction[Age] < 35, 3,
+			    airline_passenger_satisfaction[Age] < 45, 4,
+			    airline_passenger_satisfaction[Age] < 55, 5,
+			    airline_passenger_satisfaction[Age] < 65, 6,
+			    7
+			)
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+
+	column 'Faixa Etária' =
+			SWITCH (
+			    airline_passenger_satisfaction[Ordem Faixa Etária],
+			    1, "< 18",
+			    2, "18-24",
+			    3, "25-34",
+			    4, "35-44",
+			    5, "45-54",
+			    6, "55-64",
+			    "65+"
+			)
+		dataType: string
+		summarizeBy: none
+		sortByColumn: 'Ordem Faixa Etária'
+
+	column 'Ordem Faixa Distância' =
+			SWITCH (
+			    TRUE (),
+			    airline_passenger_satisfaction[Flight Distance] < 500, 1,
+			    airline_passenger_satisfaction[Flight Distance] < 1500, 2,
+			    airline_passenger_satisfaction[Flight Distance] < 3000, 3,
+			    4
+			)
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+
+	column 'Faixa Distância' =
+			SWITCH (
+			    airline_passenger_satisfaction[Ordem Faixa Distância],
+			    1, "Curta (< 500 mi)",
+			    2, "Média (500-1.499 mi)",
+			    3, "Longa (1.500-2.999 mi)",
+			    "Muito longa (3.000+ mi)"
+			)
+		dataType: string
+		summarizeBy: none
+		sortByColumn: 'Ordem Faixa Distância'
+
+	column 'Ordem Faixa Atraso Partida' =
+			SWITCH (
+			    TRUE (),
+			    airline_passenger_satisfaction[Departure Delay] = 0, 1,
+			    airline_passenger_satisfaction[Departure Delay] <= 15, 2,
+			    airline_passenger_satisfaction[Departure Delay] <= 60, 3,
+			    airline_passenger_satisfaction[Departure Delay] <= 180, 4,
+			    5
+			)
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+
+	column 'Faixa Atraso Partida' =
+			SWITCH (
+			    airline_passenger_satisfaction[Ordem Faixa Atraso Partida],
+			    1, "Sem atraso",
+			    2, "1-15 min",
+			    3, "16-60 min",
+			    4, "61-180 min",
+			    "> 180 min"
+			)
+		dataType: string
+		summarizeBy: none
+		sortByColumn: 'Ordem Faixa Atraso Partida'
+
+	/// Padrão de mercado (A14): voo pontual = chegada com até 15 min de atraso.
+	column 'Status Pontualidade Chegada' =
+			SWITCH (
+			    TRUE (),
+			    ISBLANK ( airline_passenger_satisfaction[Arrival Delay] ), "Sem informação",
+			    airline_passenger_satisfaction[Arrival Delay] <= 15, "Pontual (≤ 15 min)",
+			    "Atrasado (> 15 min)"
+			)
+		dataType: string
+		summarizeBy: none
+
+	partition airline_passenger_satisfaction = m
+		mode: import
+		source =
+				let
+				  Origem = Csv.Document(File.Contents("D:\Azul\azul\case claude\dados\airline_passenger_satisfaction.csv"), [Delimiter = ",", Columns = 24, QuoteStyle = QuoteStyle.None]),
+				  #"Cabeçalhos promovidos" = Table.PromoteHeaders(Origem, [PromoteAllScalars = true]),
+				  #"Tipo de coluna alterado" = Table.TransformColumnTypes(#"Cabeçalhos promovidos", {{"ID", Int64.Type}, {"Gender", type text}, {"Age", Int64.Type}, {"Customer Type", type text}, {"Type of Travel", type text}, {"Class", type text}, {"Flight Distance", Int64.Type}, {"Departure Delay", Int64.Type}, {"Arrival Delay", Int64.Type}, {"Departure and Arrival Time Convenience", Int64.Type}, {"Ease of Online Booking", Int64.Type}, {"Check-in Service", Int64.Type}, {"Online Boarding", Int64.Type}, {"Gate Location", Int64.Type}, {"On-board Service", Int64.Type}, {"Seat Comfort", Int64.Type}, {"Leg Room Service", Int64.Type}, {"Cleanliness", Int64.Type}, {"Food and Drink", Int64.Type}, {"In-flight Service", Int64.Type}, {"In-flight Wifi Service", Int64.Type}, {"In-flight Entertainment", Int64.Type}, {"Baggage Handling", Int64.Type}, {"Satisfaction", type text}})
+				in
+				  #"Tipo de coluna alterado"
+
+	annotation PBI_ResultType = Table
+

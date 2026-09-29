@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "bi_voos"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "7106dfbd-50d6-426e-b8fa-d577da4b8667"
+  }
+}

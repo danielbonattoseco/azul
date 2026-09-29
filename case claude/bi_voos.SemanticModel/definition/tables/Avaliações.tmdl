@@ -1,0 +1,110 @@
+/// Notas dos 14 serviços em formato longo (1 linha por passageiro x serviço). Nota 0 = não aplicável.
+table 'Avaliações'
+
+	column ID
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: ID
+
+	column Serviço
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Serviço
+		sortByColumn: 'Ordem Serviço'
+
+	column 'Serviço (EN)'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Serviço (EN)
+
+	column Categoria
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Categoria
+		sortByColumn: 'Ordem Categoria'
+
+	column 'Ordem Serviço'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem Serviço
+
+	column 'Ordem Categoria'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem Categoria
+
+	/// 0 = não aplicável; 1 (pior) a 5 (melhor).
+	column Nota
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Nota
+
+	column 'Classificação Nota'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Classificação Nota
+		sortByColumn: 'Ordem Classificação'
+
+	column 'Ordem Classificação'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Ordem Classificação
+
+	column 'Satisfeito (1/0)'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Satisfeito (1/0)
+
+	partition 'Avaliações' = m
+		mode: import
+		source =
+				let
+				  Origem = airline_passenger_satisfaction,
+				  Mapa = #table(
+				    type table [#"Serviço (EN)" = text, Serviço = text, Categoria = text, #"Ordem Serviço" = Int64.Type, #"Ordem Categoria" = Int64.Type],
+				    {
+				      {"Ease of Online Booking", "Facilidade de Reserva Online", "Digital", 1, 1},
+				      {"Online Boarding", "Embarque Online", "Digital", 2, 1},
+				      {"Departure and Arrival Time Convenience", "Conveniência de Horários", "Digital", 3, 1},
+				      {"Check-in Service", "Check-in", "Aeroporto", 4, 2},
+				      {"Gate Location", "Localização do Portão", "Aeroporto", 5, 2},
+				      {"On-board Service", "Serviço de Embarque", "Aeroporto", 6, 2},
+				      {"Baggage Handling", "Manuseio de Bagagem", "Aeroporto", 7, 2},
+				      {"Seat Comfort", "Conforto do Assento", "Conforto a Bordo", 8, 3},
+				      {"Leg Room Service", "Espaço para as Pernas", "Conforto a Bordo", 9, 3},
+				      {"Cleanliness", "Limpeza", "Conforto a Bordo", 10, 3},
+				      {"In-flight Service", "Serviço de Bordo", "Serviço a Bordo", 11, 4},
+				      {"Food and Drink", "Alimentos e Bebidas", "Serviço a Bordo", 12, 4},
+				      {"In-flight Wifi Service", "Wi-Fi a Bordo", "Entretenimento e Conectividade", 13, 5},
+				      {"In-flight Entertainment", "Entretenimento a Bordo", "Entretenimento e Conectividade", 14, 5}
+				    }
+				  ),
+				  Selecionadas = Table.SelectColumns(Origem, {"ID", "Satisfaction"} & Mapa[#"Serviço (EN)"]),
+				  Despivotada = Table.UnpivotOtherColumns(Selecionadas, {"ID", "Satisfaction"}, "Serviço (EN)", "Nota"),
+				  Mesclada = Table.NestedJoin(Despivotada, {"Serviço (EN)"}, Mapa, {"Serviço (EN)"}, "Mapa", JoinKind.Inner),
+				  Expandida = Table.ExpandTableColumn(Mesclada, "Mapa", {"Serviço", "Categoria", "Ordem Serviço", "Ordem Categoria"}),
+				  Satisfeito = Table.AddColumn(Expandida, "Satisfeito (1/0)", each if [Satisfaction] = "Satisfied" then 1 else 0, Int64.Type),
+				  Classificacao = Table.AddColumn(Satisfeito, "Classificação Nota", each
+				    if [Nota] = 0 then "Não aplicável"
+				    else if [Nota] >= 4 then "Positiva (4-5)"
+				    else if [Nota] = 3 then "Neutra (3)"
+				    else "Negativa (1-2)", type text),
+				  OrdemClassificacao = Table.AddColumn(Classificacao, "Ordem Classificação", each if [Nota] = 0 then 4 else if [Nota] >= 4 then 1 else if [Nota] = 3 then 2 else 3, Int64.Type),
+				  Tipos = Table.TransformColumnTypes(OrdemClassificacao, {{"ID", Int64.Type}, {"Nota", Int64.Type}}),
+				  Final = Table.RemoveColumns(Tipos, {"Satisfaction"})
+				in
+				  Final
+
+	annotation PBI_ResultType = Table
+

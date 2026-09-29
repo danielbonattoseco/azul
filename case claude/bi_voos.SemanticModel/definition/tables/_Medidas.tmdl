@@ -1,0 +1,604 @@
+/// Tabela de medidas do dashboard de satisfação de passageiros.
+table _Medidas
+
+	/// Quantidade de passageiros (linhas) no contexto de filtro.
+	measure 'Total Passageiros' = COUNTROWS ( airline_passenger_satisfaction )
+		formatString: #,0
+		displayFolder: 01 Volume
+
+	measure 'Passageiros Satisfeitos' = CALCULATE ( [Total Passageiros], KEEPFILTERS ( airline_passenger_satisfaction[Satisfaction] = "Satisfied" ) )
+		formatString: #,0
+		displayFolder: 01 Volume
+
+	measure 'Passageiros Neutros ou Insatisfeitos' = CALCULATE ( [Total Passageiros], KEEPFILTERS ( airline_passenger_satisfaction[Satisfaction] = "Neutral or Dissatisfied" ) )
+		formatString: #,0
+		displayFolder: 01 Volume
+
+	/// Participação no total visível (respeita segmentações, ignora o eixo do visual).
+	measure '% do Total de Passageiros' = DIVIDE ( [Total Passageiros], CALCULATE ( [Total Passageiros], ALLSELECTED () ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 01 Volume
+
+	measure 'Clientes Recorrentes' = CALCULATE ( [Total Passageiros], KEEPFILTERS ( airline_passenger_satisfaction[Customer Type] = "Returning" ) )
+		formatString: #,0
+		displayFolder: 01 Volume
+
+	measure 'Clientes Primeira Viagem' = CALCULATE ( [Total Passageiros], KEEPFILTERS ( airline_passenger_satisfaction[Customer Type] = "First-time" ) )
+		formatString: #,0
+		displayFolder: 01 Volume
+
+	measure '% Clientes Recorrentes' = DIVIDE ( [Clientes Recorrentes], [Total Passageiros] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 01 Volume
+
+	measure '% Viagens a Negócios' = DIVIDE ( CALCULATE ( [Total Passageiros], KEEPFILTERS ( airline_passenger_satisfaction[Type of Travel] = "Business" ) ), [Total Passageiros] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 01 Volume
+
+	measure '% Classe Business' = DIVIDE ( CALCULATE ( [Total Passageiros], KEEPFILTERS ( airline_passenger_satisfaction[Class] = "Business" ) ), [Total Passageiros] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 01 Volume
+
+	measure '% Passageiras (Feminino)' = DIVIDE ( CALCULATE ( [Total Passageiros], KEEPFILTERS ( airline_passenger_satisfaction[Gender] = "Female" ) ), [Total Passageiros] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 01 Volume
+
+	/// Taxa de satisfação (CSAT): passageiros "Satisfied" / total.
+	measure '% Satisfação' = DIVIDE ( [Passageiros Satisfeitos], [Total Passageiros] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 02 Satisfação
+
+	measure '% Neutros ou Insatisfeitos' = DIVIDE ( [Passageiros Neutros ou Insatisfeitos], [Total Passageiros] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 02 Satisfação
+
+	/// % Satisfação da base inteira, ignorando todos os filtros.
+	measure '% Satisfação Geral' = CALCULATE ( [% Satisfação], REMOVEFILTERS ( airline_passenger_satisfaction ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 02 Satisfação
+
+	/// Diferença, em pontos percentuais, entre o segmento e a base inteira.
+	measure 'Δ Satisfação vs Geral (p.p.)' = ( [% Satisfação] - [% Satisfação Geral] ) * 100
+		formatString: +0.0" p.p.";-0.0" p.p.";0.0" p.p."
+		displayFolder: 02 Satisfação
+
+	/// 100 = igual à média geral; acima de 100 = segmento mais satisfeito que a média.
+	measure 'Índice de Satisfação (Geral = 100)' = DIVIDE ( [% Satisfação], [% Satisfação Geral] ) * 100
+		formatString: 0
+		displayFolder: 02 Satisfação
+
+	/// Quantos satisfeitos existem para cada passageiro neutro/insatisfeito.
+	measure 'Razão Satisfeitos por Insatisfeito' = DIVIDE ( [Passageiros Satisfeitos], [Passageiros Neutros ou Insatisfeitos] )
+		formatString: 0.00
+		displayFolder: 02 Satisfação
+
+	measure '% Satisfação - Recorrentes' = CALCULATE ( [% Satisfação], airline_passenger_satisfaction[Customer Type] = "Returning" )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure '% Satisfação - Primeira Viagem' = CALCULATE ( [% Satisfação], airline_passenger_satisfaction[Customer Type] = "First-time" )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure 'Gap Satisfação Recorrentes vs Primeira Viagem (p.p.)' = ( [% Satisfação - Recorrentes] - [% Satisfação - Primeira Viagem] ) * 100
+		formatString: +0.0" p.p.";-0.0" p.p.";0.0" p.p."
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure '% Satisfação - Classe Business' = CALCULATE ( [% Satisfação], airline_passenger_satisfaction[Class] = "Business" )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure '% Satisfação - Classe Economy Plus' = CALCULATE ( [% Satisfação], airline_passenger_satisfaction[Class] = "Economy Plus" )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure '% Satisfação - Classe Economy' = CALCULATE ( [% Satisfação], airline_passenger_satisfaction[Class] = "Economy" )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure 'Gap Satisfação Business vs Economy (p.p.)' = ( [% Satisfação - Classe Business] - [% Satisfação - Classe Economy] ) * 100
+		formatString: +0.0" p.p.";-0.0" p.p.";0.0" p.p."
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure '% Satisfação - Viagem a Negócios' = CALCULATE ( [% Satisfação], airline_passenger_satisfaction[Type of Travel] = "Business" )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure '% Satisfação - Viagem Pessoal' = CALCULATE ( [% Satisfação], airline_passenger_satisfaction[Type of Travel] = "Personal" )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure 'Gap Satisfação Negócios vs Pessoal (p.p.)' = ( [% Satisfação - Viagem a Negócios] - [% Satisfação - Viagem Pessoal] ) * 100
+		formatString: +0.0" p.p.";-0.0" p.p.";0.0" p.p."
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure '% Satisfação - Feminino' = CALCULATE ( [% Satisfação], airline_passenger_satisfaction[Gender] = "Female" )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure '% Satisfação - Masculino' = CALCULATE ( [% Satisfação], airline_passenger_satisfaction[Gender] = "Male" )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure 'Gap Satisfação Feminino vs Masculino (p.p.)' = ( [% Satisfação - Feminino] - [% Satisfação - Masculino] ) * 100
+		formatString: +0.0" p.p.";-0.0" p.p.";0.0" p.p."
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure '% Satisfação - Chegada Pontual' = CALCULATE ( [% Satisfação], airline_passenger_satisfaction[Arrival Delay] <= 15, NOT ISBLANK ( airline_passenger_satisfaction[Arrival Delay] ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure '% Satisfação - Chegada Atrasada' = CALCULATE ( [% Satisfação], airline_passenger_satisfaction[Arrival Delay] > 15 )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 02 Satisfação\Segmentos
+
+	/// Quanto a satisfação cai quando o voo chega com mais de 15 min de atraso.
+	measure 'Gap Satisfação Pontual vs Atrasado (p.p.)' = ( [% Satisfação - Chegada Pontual] - [% Satisfação - Chegada Atrasada] ) * 100
+		formatString: +0.0" p.p.";-0.0" p.p.";0.0" p.p."
+		displayFolder: 02 Satisfação\Segmentos
+
+	measure 'Idade Média' = AVERAGE ( airline_passenger_satisfaction[Age] )
+		formatString: 0.0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Idade Mediana' = MEDIAN ( airline_passenger_satisfaction[Age] )
+		formatString: 0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Idade Mínima' = MIN ( airline_passenger_satisfaction[Age] )
+		formatString: 0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Idade Máxima' = MAX ( airline_passenger_satisfaction[Age] )
+		formatString: 0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Desvio Padrão Idade' = STDEV.S ( airline_passenger_satisfaction[Age] )
+		formatString: 0.0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Idade Média - Satisfeitos' = CALCULATE ( [Idade Média], airline_passenger_satisfaction[Satisfaction] = "Satisfied" )
+		formatString: 0.0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Idade Média - Neutros ou Insatisfeitos' = CALCULATE ( [Idade Média], airline_passenger_satisfaction[Satisfaction] = "Neutral or Dissatisfied" )
+		formatString: 0.0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Distância Média (mi)' = AVERAGE ( airline_passenger_satisfaction[Flight Distance] )
+		formatString: #,0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Distância Média (km)' = [Distância Média (mi)] * 1.609344
+		formatString: #,0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Distância Mediana (mi)' = MEDIAN ( airline_passenger_satisfaction[Flight Distance] )
+		formatString: #,0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Distância Mínima (mi)' = MIN ( airline_passenger_satisfaction[Flight Distance] )
+		formatString: #,0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Distância Máxima (mi)' = MAX ( airline_passenger_satisfaction[Flight Distance] )
+		formatString: #,0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Desvio Padrão Distância (mi)' = STDEV.S ( airline_passenger_satisfaction[Flight Distance] )
+		formatString: #,0
+		displayFolder: 03 Perfil do Passageiro
+
+	/// Soma das milhas voadas (passageiro-milha).
+	measure 'Milhas Voadas (Total)' = SUM ( airline_passenger_satisfaction[Flight Distance] )
+		formatString: #,0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Distância Média - Satisfeitos (mi)' = CALCULATE ( [Distância Média (mi)], airline_passenger_satisfaction[Satisfaction] = "Satisfied" )
+		formatString: #,0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Distância Média - Neutros ou Insatisfeitos (mi)' = CALCULATE ( [Distância Média (mi)], airline_passenger_satisfaction[Satisfaction] = "Neutral or Dissatisfied" )
+		formatString: #,0
+		displayFolder: 03 Perfil do Passageiro
+
+	measure 'Atraso Médio Partida (min)' = AVERAGE ( airline_passenger_satisfaction[Departure Delay] )
+		formatString: 0.0
+		displayFolder: 04 Pontualidade
+
+	/// Ignora os registros sem informação de atraso na chegada.
+	measure 'Atraso Médio Chegada (min)' = AVERAGE ( airline_passenger_satisfaction[Arrival Delay] )
+		formatString: 0.0
+		displayFolder: 04 Pontualidade
+
+	measure 'Atraso Mediano Partida (min)' = MEDIAN ( airline_passenger_satisfaction[Departure Delay] )
+		formatString: 0
+		displayFolder: 04 Pontualidade
+
+	measure 'Atraso Mediano Chegada (min)' = MEDIAN ( airline_passenger_satisfaction[Arrival Delay] )
+		formatString: 0
+		displayFolder: 04 Pontualidade
+
+	/// 90% dos voos partem com atraso igual ou inferior a este valor.
+	measure 'Atraso P90 Partida (min)' = PERCENTILEX.INC ( airline_passenger_satisfaction, airline_passenger_satisfaction[Departure Delay], 0.9 )
+		formatString: 0
+		displayFolder: 04 Pontualidade
+
+	measure 'Atraso P90 Chegada (min)' =
+			PERCENTILEX.INC (
+			    FILTER ( airline_passenger_satisfaction, NOT ISBLANK ( airline_passenger_satisfaction[Arrival Delay] ) ),
+			    airline_passenger_satisfaction[Arrival Delay],
+			    0.9
+			)
+		formatString: 0
+		displayFolder: 04 Pontualidade
+
+	measure 'Atraso Máximo Partida (min)' = MAX ( airline_passenger_satisfaction[Departure Delay] )
+		formatString: #,0
+		displayFolder: 04 Pontualidade
+
+	measure 'Atraso Máximo Chegada (min)' = MAX ( airline_passenger_satisfaction[Arrival Delay] )
+		formatString: #,0
+		displayFolder: 04 Pontualidade
+
+	measure 'Minutos Totais de Atraso na Chegada' = SUM ( airline_passenger_satisfaction[Arrival Delay] )
+		formatString: #,0
+		displayFolder: 04 Pontualidade
+
+	measure 'Voos com Atraso na Partida' = CALCULATE ( [Total Passageiros], KEEPFILTERS ( airline_passenger_satisfaction[Departure Delay] > 0 ) )
+		formatString: #,0
+		displayFolder: 04 Pontualidade
+
+	measure '% Voos com Atraso na Partida' = DIVIDE ( [Voos com Atraso na Partida], [Total Passageiros] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 04 Pontualidade
+
+	/// Atraso médio considerando apenas voos que efetivamente atrasaram.
+	measure 'Atraso Médio Partida - Somente Atrasados (min)' = CALCULATE ( [Atraso Médio Partida (min)], KEEPFILTERS ( airline_passenger_satisfaction[Departure Delay] > 0 ) )
+		formatString: 0.0
+		displayFolder: 04 Pontualidade
+
+	/// OTP de partida: % de voos com até 15 min de atraso (padrão A14).
+	measure '% Pontualidade Partida (OTP)' = DIVIDE ( CALCULATE ( [Total Passageiros], KEEPFILTERS ( airline_passenger_satisfaction[Departure Delay] <= 15 ) ), [Total Passageiros] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 04 Pontualidade
+
+	/// OTP de chegada: % de voos com até 15 min de atraso, sobre os registros com informação.
+	measure '% Pontualidade Chegada (OTP)' =
+			VAR ComInfo = CALCULATE ( [Total Passageiros], KEEPFILTERS ( NOT ISBLANK ( airline_passenger_satisfaction[Arrival Delay] ) ) )
+			VAR Pontuais = CALCULATE ( [Total Passageiros], KEEPFILTERS ( airline_passenger_satisfaction[Arrival Delay] <= 15 && NOT ISBLANK ( airline_passenger_satisfaction[Arrival Delay] ) ) )
+			RETURN DIVIDE ( Pontuais, ComInfo )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 04 Pontualidade
+
+	measure '% Atrasos Severos na Chegada (> 60 min)' =
+			VAR ComInfo = CALCULATE ( [Total Passageiros], KEEPFILTERS ( NOT ISBLANK ( airline_passenger_satisfaction[Arrival Delay] ) ) )
+			VAR Severos = CALCULATE ( [Total Passageiros], KEEPFILTERS ( airline_passenger_satisfaction[Arrival Delay] > 60 ) )
+			RETURN DIVIDE ( Severos, ComInfo )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 04 Pontualidade
+
+	/// Minutos recuperados em voo (atraso partida - atraso chegada). Positivo = chegou com menos atraso do que partiu.
+	measure 'Recuperação Média de Atraso (min)' =
+			AVERAGEX (
+			    FILTER ( airline_passenger_satisfaction, NOT ISBLANK ( airline_passenger_satisfaction[Arrival Delay] ) ),
+			    airline_passenger_satisfaction[Departure Delay] - airline_passenger_satisfaction[Arrival Delay]
+			)
+		formatString: +0.0;-0.0;0.0
+		displayFolder: 04 Pontualidade
+
+	/// Entre os voos que partiram atrasados, % que chegaram com atraso menor que o da partida.
+	measure '% Voos que Recuperaram Atraso' =
+			VAR Atrasados =
+			    FILTER (
+			        airline_passenger_satisfaction,
+			        airline_passenger_satisfaction[Departure Delay] > 0
+			            && NOT ISBLANK ( airline_passenger_satisfaction[Arrival Delay] )
+			    )
+			VAR Recuperados = FILTER ( Atrasados, airline_passenger_satisfaction[Arrival Delay] < airline_passenger_satisfaction[Departure Delay] )
+			RETURN DIVIDE ( COUNTROWS ( Recuperados ), COUNTROWS ( Atrasados ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 04 Pontualidade
+
+	/// Correlação de Pearson entre atraso na chegada e satisfação (1/0). Negativa = mais atraso, menos satisfação.
+	measure 'Correlação Atraso Chegada x Satisfação' =
+			VAR T = FILTER ( airline_passenger_satisfaction, NOT ISBLANK ( airline_passenger_satisfaction[Arrival Delay] ) )
+			VAR N = COUNTROWS ( T ) * 1.0
+			VAR SX = SUMX ( T, airline_passenger_satisfaction[Arrival Delay] * 1.0 )
+			VAR SY = SUMX ( T, airline_passenger_satisfaction[Satisfeito (1/0)] * 1.0 )
+			VAR SXX = SUMX ( T, airline_passenger_satisfaction[Arrival Delay] * 1.0 * airline_passenger_satisfaction[Arrival Delay] )
+			VAR SXY = SUMX ( T, airline_passenger_satisfaction[Arrival Delay] * 1.0 * airline_passenger_satisfaction[Satisfeito (1/0)] )
+			RETURN DIVIDE ( N * SXY - SX * SY, SQRT ( ( N * SXX - SX * SX ) * ( N * SY - SY * SY ) ) )
+		formatString: 0.000
+		displayFolder: 04 Pontualidade
+
+	/// Notas de 1 a 5 (exclui 0 = não aplicável).
+	measure 'Avaliações Válidas' = CALCULATE ( COUNTROWS ( 'Avaliações' ), KEEPFILTERS ( 'Avaliações'[Nota] > 0 ) )
+		formatString: #,0
+		displayFolder: 05 Avaliações de Serviço
+
+	measure 'Respostas Não Aplicáveis' = CALCULATE ( COUNTROWS ( 'Avaliações' ), KEEPFILTERS ( 'Avaliações'[Nota] = 0 ) )
+		formatString: #,0
+		displayFolder: 05 Avaliações de Serviço
+
+	measure '% Não Aplicável' = DIVIDE ( [Respostas Não Aplicáveis], COUNTROWS ( 'Avaliações' ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 05 Avaliações de Serviço
+
+	/// Nota média de 1 a 5, excluindo "não aplicável". Use com Avaliações[Serviço] ou [Categoria] no eixo.
+	measure 'Nota Média' = CALCULATE ( AVERAGE ( 'Avaliações'[Nota] ), KEEPFILTERS ( 'Avaliações'[Nota] > 0 ) )
+		formatString: 0.00
+		displayFolder: 05 Avaliações de Serviço
+
+	measure 'Nota Mediana' = CALCULATE ( MEDIAN ( 'Avaliações'[Nota] ), KEEPFILTERS ( 'Avaliações'[Nota] > 0 ) )
+		formatString: 0.0
+		displayFolder: 05 Avaliações de Serviço
+
+	measure 'Desvio Padrão Nota' = CALCULATE ( STDEV.S ( 'Avaliações'[Nota] ), KEEPFILTERS ( 'Avaliações'[Nota] > 0 ) )
+		formatString: 0.00
+		displayFolder: 05 Avaliações de Serviço
+
+	/// Dispersão relativa das notas: quanto maior, menos consenso entre os passageiros.
+	measure 'Coeficiente de Variação Nota' = DIVIDE ( [Desvio Padrão Nota], [Nota Média] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 05 Avaliações de Serviço
+
+	/// % de notas 4 ou 5 entre as avaliações válidas.
+	measure '% Top-2-Box (Notas 4-5)' = DIVIDE ( CALCULATE ( COUNTROWS ( 'Avaliações' ), KEEPFILTERS ( 'Avaliações'[Nota] >= 4 ) ), [Avaliações Válidas] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 05 Avaliações de Serviço
+
+	measure '% Nota Neutra (3)' = DIVIDE ( CALCULATE ( COUNTROWS ( 'Avaliações' ), KEEPFILTERS ( 'Avaliações'[Nota] = 3 ) ), [Avaliações Válidas] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 05 Avaliações de Serviço
+
+	/// % de notas 1 ou 2 entre as avaliações válidas.
+	measure '% Bottom-2-Box (Notas 1-2)' = DIVIDE ( CALCULATE ( COUNTROWS ( 'Avaliações' ), KEEPFILTERS ( 'Avaliações'[Nota] >= 1 && 'Avaliações'[Nota] <= 2 ) ), [Avaliações Válidas] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 05 Avaliações de Serviço
+
+	measure '% Nota Máxima (5)' = DIVIDE ( CALCULATE ( COUNTROWS ( 'Avaliações' ), KEEPFILTERS ( 'Avaliações'[Nota] = 5 ) ), [Avaliações Válidas] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 05 Avaliações de Serviço
+
+	/// Saldo líquido (estilo NPS): % Top-2-Box - % Bottom-2-Box.
+	measure 'Saldo Líquido de Avaliação' = [% Top-2-Box (Notas 4-5)] - [% Bottom-2-Box (Notas 1-2)]
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: 05 Avaliações de Serviço
+
+	/// Nota média de todos os serviços, mantendo os filtros de passageiro (classe, idade etc.).
+	measure 'Nota Média Geral (Todos os Serviços)' =
+			CALCULATE (
+			    [Nota Média],
+			    REMOVEFILTERS ( 'Avaliações'[Serviço], 'Avaliações'[Serviço (EN)], 'Avaliações'[Ordem Serviço], 'Avaliações'[Categoria], 'Avaliações'[Ordem Categoria] )
+			)
+		formatString: 0.00
+		displayFolder: 05 Avaliações de Serviço
+
+	measure 'Δ Nota vs Média dos Serviços' = [Nota Média] - [Nota Média Geral (Todos os Serviços)]
+		formatString: +0.00;-0.00;0.00
+		displayFolder: 05 Avaliações de Serviço
+
+	measure 'Nota Média - Satisfeitos' = CALCULATE ( [Nota Média], 'Avaliações'[Satisfeito (1/0)] = 1 )
+		formatString: 0.00
+		displayFolder: 05 Avaliações de Serviço\Drivers
+
+	measure 'Nota Média - Neutros ou Insatisfeitos' = CALCULATE ( [Nota Média], 'Avaliações'[Satisfeito (1/0)] = 0 )
+		formatString: 0.00
+		displayFolder: 05 Avaliações de Serviço\Drivers
+
+	/// Diferença de nota entre satisfeitos e insatisfeitos. Quanto maior, mais o serviço discrimina a satisfação.
+	measure 'Gap de Nota Satisfeitos vs Insatisfeitos' = [Nota Média - Satisfeitos] - [Nota Média - Neutros ou Insatisfeitos]
+		formatString: +0.00;-0.00;0.00
+		displayFolder: 05 Avaliações de Serviço\Drivers
+
+	/// % de satisfação geral entre os passageiros que deram a nota em contexto. Use com Avaliações[Nota] no eixo.
+	measure '% Satisfação dos Avaliadores' = CALCULATE ( AVERAGE ( 'Avaliações'[Satisfeito (1/0)] ), KEEPFILTERS ( 'Avaliações'[Nota] > 0 ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 05 Avaliações de Serviço\Drivers
+
+	/// Diferença de % satisfação entre quem deu nota 4-5 e quem deu 1-2 no serviço.
+	measure 'Lift de Satisfação Top vs Bottom (p.p.)' =
+			VAR SatTop = CALCULATE ( AVERAGE ( 'Avaliações'[Satisfeito (1/0)] ), KEEPFILTERS ( 'Avaliações'[Nota] >= 4 ) )
+			VAR SatBottom = CALCULATE ( AVERAGE ( 'Avaliações'[Satisfeito (1/0)] ), KEEPFILTERS ( 'Avaliações'[Nota] >= 1 && 'Avaliações'[Nota] <= 2 ) )
+			RETURN ( SatTop - SatBottom ) * 100
+		formatString: +0.0" p.p.";-0.0" p.p.";0.0" p.p."
+		displayFolder: 05 Avaliações de Serviço\Drivers
+
+	/// Correlação de Pearson (ponto-bisserial) entre a nota do serviço e a satisfação geral (1/0). Proxy de importância do serviço.
+	measure 'Correlação Nota x Satisfação' =
+			VAR T = CALCULATETABLE ( 'Avaliações', KEEPFILTERS ( 'Avaliações'[Nota] > 0 ) )
+			VAR N = COUNTROWS ( T ) * 1.0
+			VAR SX = SUMX ( T, 'Avaliações'[Nota] * 1.0 )
+			VAR SY = SUMX ( T, 'Avaliações'[Satisfeito (1/0)] * 1.0 )
+			VAR SXX = SUMX ( T, 'Avaliações'[Nota] * 1.0 * 'Avaliações'[Nota] )
+			VAR SXY = SUMX ( T, 'Avaliações'[Nota] * 1.0 * 'Avaliações'[Satisfeito (1/0)] )
+			RETURN DIVIDE ( N * SXY - SX * SY, SQRT ( ( N * SXX - SX * SX ) * ( N * SY - SY * SY ) ) )
+		formatString: 0.000
+		displayFolder: 05 Avaliações de Serviço\Drivers
+
+	/// Peso de cada serviço na soma das correlações positivas dos serviços visíveis. Requer Serviço no contexto.
+	measure 'Importância Relativa do Serviço' =
+			IF (
+			    HASONEVALUE ( 'Avaliações'[Serviço] ),
+			    VAR Total = SUMX ( ALLSELECTED ( 'Avaliações'[Serviço] ), MAX ( 0, [Correlação Nota x Satisfação] ) )
+			    RETURN DIVIDE ( MAX ( 0, [Correlação Nota x Satisfação] ), Total )
+			)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 05 Avaliações de Serviço\Drivers
+
+	measure 'Ranking Serviço por Nota' =
+			IF (
+			    HASONEVALUE ( 'Avaliações'[Serviço] ),
+			    RANKX ( ALLSELECTED ( 'Avaliações'[Serviço] ), [Nota Média], , DESC, DENSE )
+			)
+		formatString: 0
+		displayFolder: 05 Avaliações de Serviço\Drivers
+
+	measure 'Ranking Serviço por Importância' =
+			IF (
+			    HASONEVALUE ( 'Avaliações'[Serviço] ),
+			    RANKX ( ALLSELECTED ( 'Avaliações'[Serviço] ), [Correlação Nota x Satisfação], , DESC, DENSE )
+			)
+		formatString: 0
+		displayFolder: 05 Avaliações de Serviço\Drivers
+
+	/// Matriz Importância x Desempenho (IPA): compara a correlação e a nota do serviço com a média dos serviços visíveis.
+	measure 'Quadrante Importância x Desempenho' =
+			IF (
+			    HASONEVALUE ( 'Avaliações'[Serviço] ),
+			    VAR Imp = [Correlação Nota x Satisfação]
+			    VAR Perf = [Nota Média]
+			    VAR ImpMedia = AVERAGEX ( ALLSELECTED ( 'Avaliações'[Serviço] ), [Correlação Nota x Satisfação] )
+			    VAR PerfMedia = AVERAGEX ( ALLSELECTED ( 'Avaliações'[Serviço] ), [Nota Média] )
+			    RETURN
+			        SWITCH (
+			            TRUE (),
+			            Imp >= ImpMedia && Perf < PerfMedia, "1. Prioridade de melhoria",
+			            Imp >= ImpMedia && Perf >= PerfMedia, "2. Manter (ponto forte)",
+			            Imp < ImpMedia && Perf < PerfMedia, "3. Baixa prioridade",
+			            "4. Possível excesso de investimento"
+			        )
+			)
+		displayFolder: 05 Avaliações de Serviço\Drivers
+
+	/// Passageiros que deram nota 1 a pelo menos um dos serviços em contexto.
+	measure 'Passageiros com Avaliação Crítica (Nota 1)' = CALCULATE ( DISTINCTCOUNT ( 'Avaliações'[ID] ), KEEPFILTERS ( 'Avaliações'[Nota] = 1 ) )
+		formatString: #,0
+		displayFolder: 05 Avaliações de Serviço\Experiência do Passageiro
+
+	measure '% Passageiros com Avaliação Crítica' = DIVIDE ( [Passageiros com Avaliação Crítica (Nota 1)], [Total Passageiros] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 05 Avaliações de Serviço\Experiência do Passageiro
+
+	/// Passageiros cujas notas válidas nos serviços em contexto são todas 4 ou 5.
+	measure 'Passageiros Encantados (Todas as Notas ≥ 4)' =
+			VAR PorPassageiro =
+			    ADDCOLUMNS (
+			        VALUES ( airline_passenger_satisfaction[ID] ),
+			        "@NotaMin", CALCULATE ( MIN ( 'Avaliações'[Nota] ), KEEPFILTERS ( 'Avaliações'[Nota] > 0 ) )
+			    )
+			RETURN COUNTROWS ( FILTER ( PorPassageiro, [@NotaMin] >= 4 ) )
+		formatString: #,0
+		displayFolder: 05 Avaliações de Serviço\Experiência do Passageiro
+
+	measure '% Passageiros Encantados' = DIVIDE ( [Passageiros Encantados (Todas as Notas ≥ 4)], [Total Passageiros] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 05 Avaliações de Serviço\Experiência do Passageiro
+
+	/// Média, por passageiro, da quantidade de serviços com nota 1 ou 2.
+	measure 'Média de Serviços Mal Avaliados por Passageiro' =
+			DIVIDE (
+			    CALCULATE ( COUNTROWS ( 'Avaliações' ), KEEPFILTERS ( 'Avaliações'[Nota] >= 1 && 'Avaliações'[Nota] <= 2 ) ),
+			    [Total Passageiros]
+			)
+		formatString: 0.00
+		displayFolder: 05 Avaliações de Serviço\Experiência do Passageiro
+
+	measure 'Resumo Satisfação' =
+			FORMAT ( [% Satisfação], "0.0%" ) & " dos passageiros satisfeitos ("
+			    & FORMAT ( [Δ Satisfação vs Geral (p.p.)], "+0.0;-0.0;0.0" ) & " p.p. vs. base total)"
+		displayFolder: 06 Insights (Texto)
+
+	measure 'Serviço Melhor Avaliado' =
+			VAR T = FILTER ( ADDCOLUMNS ( ALLSELECTED ( 'Avaliações'[Serviço] ), "@Nota", [Nota Média] ), NOT ISBLANK ( [@Nota] ) )
+			VAR Top1 = TOPN ( 1, T, [@Nota], DESC )
+			RETURN MAXX ( Top1, 'Avaliações'[Serviço] & " (" & FORMAT ( [@Nota], "0.00" ) & ")" )
+		displayFolder: 06 Insights (Texto)
+
+	measure 'Serviço Pior Avaliado' =
+			VAR T = FILTER ( ADDCOLUMNS ( ALLSELECTED ( 'Avaliações'[Serviço] ), "@Nota", [Nota Média] ), NOT ISBLANK ( [@Nota] ) )
+			VAR Bottom1 = TOPN ( 1, T, [@Nota], ASC )
+			RETURN MAXX ( Bottom1, 'Avaliações'[Serviço] & " (" & FORMAT ( [@Nota], "0.00" ) & ")" )
+		displayFolder: 06 Insights (Texto)
+
+	/// Serviço com maior correlação entre nota e satisfação geral.
+	measure 'Principal Driver de Satisfação' =
+			VAR T = FILTER ( ADDCOLUMNS ( ALLSELECTED ( 'Avaliações'[Serviço] ), "@Corr", [Correlação Nota x Satisfação] ), NOT ISBLANK ( [@Corr] ) )
+			VAR Top1 = TOPN ( 1, T, [@Corr], DESC )
+			RETURN MAXX ( Top1, 'Avaliações'[Serviço] & " (r = " & FORMAT ( [@Corr], "0.00" ) & ")" )
+		displayFolder: 06 Insights (Texto)
+
+	/// Serviço mais importante (maior correlação) entre os que têm nota abaixo da média dos serviços.
+	measure 'Maior Oportunidade de Melhoria' =
+			VAR T =
+			    FILTER (
+			        ADDCOLUMNS ( ALLSELECTED ( 'Avaliações'[Serviço] ), "@Nota", [Nota Média], "@Corr", [Correlação Nota x Satisfação] ),
+			        NOT ISBLANK ( [@Nota] )
+			    )
+			VAR MediaNota = AVERAGEX ( T, [@Nota] )
+			VAR Top1 = TOPN ( 1, FILTER ( T, [@Nota] < MediaNota ), [@Corr], DESC )
+			RETURN MAXX ( Top1, 'Avaliações'[Serviço] & " (nota " & FORMAT ( [@Nota], "0.00" ) & ", r = " & FORMAT ( [@Corr], "0.00" ) & ")" )
+		displayFolder: 06 Insights (Texto)
+
+	measure 'Registros sem Atraso de Chegada' = CALCULATE ( [Total Passageiros], KEEPFILTERS ( ISBLANK ( airline_passenger_satisfaction[Arrival Delay] ) ) )
+		formatString: #,0
+		displayFolder: 07 Qualidade dos Dados
+
+	measure '% Registros sem Atraso de Chegada' = DIVIDE ( [Registros sem Atraso de Chegada], [Total Passageiros] )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 07 Qualidade dos Dados
+
+	measure 'IDs Duplicados' = COUNTROWS ( airline_passenger_satisfaction ) - DISTINCTCOUNT ( airline_passenger_satisfaction[ID] )
+		formatString: #,0
+		displayFolder: 07 Qualidade dos Dados
+
+	measure 'Passageiros com Alguma Resposta N/A' = CALCULATE ( DISTINCTCOUNT ( 'Avaliações'[ID] ), KEEPFILTERS ( 'Avaliações'[Nota] = 0 ) )
+		formatString: #,0
+		displayFolder: 07 Qualidade dos Dados
+
+	/// % de respostas de serviço com nota válida (1-5).
+	measure '% Completude das Avaliações' = DIVIDE ( [Avaliações Válidas], COUNTROWS ( 'Avaliações' ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: 07 Qualidade dos Dados
+
+	/// Estimativa de ganho de satisfação (p.p.) entre os avaliadores do serviço se as notas 1-2 passassem a se comportar como as notas 4-5.
+	/// % Bottom-2-Box x Lift. Associação, não causalidade; os potenciais dos serviços não são somáveis.
+	measure 'Potencial de Ganho de Satisfação (p.p.)' = [% Bottom-2-Box (Notas 1-2)] * [Lift de Satisfação Top vs Bottom (p.p.)]
+		formatString: +0.0" p.p.";-0.0" p.p.";0.0" p.p."
+		displayFolder: 05 Avaliações de Serviço\Drivers
+
+	/// Serviços no quadrante "1. Prioridade de melhoria", do mais para o menos importante.
+	measure 'Serviços Prioritários' =
+			VAR T =
+			    FILTER (
+			        ADDCOLUMNS ( ALLSELECTED ( 'Avaliações'[Serviço] ), "@Quad", [Quadrante Importância x Desempenho], "@Corr", [Correlação Nota x Satisfação] ),
+			        LEFT ( [@Quad], 1 ) = "1"
+			    )
+			RETURN CONCATENATEX ( T, 'Avaliações'[Serviço], ", ", [@Corr], DESC )
+		displayFolder: 06 Insights (Texto)
+
+	/// Serviço com maior potencial de ganho de satisfação.
+	measure 'Serviço com Maior Potencial de Ganho' =
+			VAR T = FILTER ( ADDCOLUMNS ( ALLSELECTED ( 'Avaliações'[Serviço] ), "@Pot", [Potencial de Ganho de Satisfação (p.p.)] ), NOT ISBLANK ( [@Pot] ) )
+			VAR Top1 = TOPN ( 1, T, [@Pot], DESC )
+			RETURN MAXX ( Top1, 'Avaliações'[Serviço] & " (" & FORMAT ( [@Pot], "+0.0" ) & " p.p.)" )
+		displayFolder: 06 Insights (Texto)
+
+	/// Cor hexadecimal do quadrante IPA, para formatação condicional por valor de campo.
+	measure 'Cor Quadrante' =
+			SWITCH (
+			    LEFT ( [Quadrante Importância x Desempenho], 1 ),
+			    "1", "#D64545",
+			    "2", "#2E9E5B",
+			    "3", "#A6A6A6",
+			    "4", "#8FB4E3"
+			)
+		displayFolder: 08 Formatação
+
+	column Coluna
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Coluna
+
+	partition _Medidas = m
+		mode: import
+		source =
+				let
+				  Fonte = #table(type table [Coluna = text], {})
+				in
+				  Fonte
+
+	annotation PBI_ResultType = Table
+
